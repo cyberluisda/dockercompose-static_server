@@ -1,0 +1,32 @@
+---
+version: '3'
+services:
+
+  # Dummy service to start all stack
+  target:
+    image: busybox
+    depends_on:
+      - httpd
+      - sshserver
+    command: echo -n ""
+
+  httpd:
+    image: nginx:stable-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - static_data:/usr/share/nginx/html:ro
+
+  sshserver:
+    image: anthonyneto/sshserver
+    ports:
+      - "2022:22"
+    environment:
+      # SSH_PUB_KEY must be defined in .env file.
+      ssh_key: ${SSH_PUB_KEY}
+
+    volumes:
+      - static_data:/data
+
+volumes:
+  static_data:
